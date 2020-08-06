@@ -5,12 +5,16 @@ import urllib.parse as urlparse
 from urllib.parse import parse_qs
 import requests
 from tqdm import tqdm
+import time
+import random
 
 @click.command()
-@click.option('-f','--file')
-@click.option('-o','--output')
-@click.option('-m','--mark')
-def main(file,output,mark):
+@click.option('-f','--file',required=True,type=str)
+@click.option('-o','--output',type=str)
+@click.option('-m','--mark',type=str)
+@click.option('-s','--sleep',type=int)
+@click.option('-h','--human',default=False, type=bool)
+def main(file,output,mark,sleep,human):
     if(mark==None):
         mark="patataman"
     f=open(file,"r")
@@ -28,12 +32,19 @@ def main(file,output,mark):
             newparameters=parameters
             newparameters[param]=mark
             res = urllib.parse.ParseResult(scheme=u.scheme, netloc=u.hostname, path=u.path, params=u.params, query=urllib.parse.urlencode(newparameters), fragment=u.fragment)
-            newurl=res.geturl()
-            page=requests.get(newurl)
-            if(mark in page.text):
-                if(output is not None):
-                    o.write(newurl+"\n")
-                tqdm.write(newurl)
+            try:
+                newurl=res.geturl()
+                page=requests.get(newurl)
+                if(mark in page.text):
+                    if(output is not None):
+                        o.write(newurl+"\n")
+                        tqdm.write(newurl)
+            except Exception:
+                pass
+            if(sleep is not None):
+                time.sleep(sleep)
+            if(human == True):
+                time.sleep(random.randint(4,9))
 
 
     f.close()
