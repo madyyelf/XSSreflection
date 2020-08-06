@@ -7,14 +7,15 @@ import requests
 from tqdm import tqdm
 import time
 import random
+import pyfiglet
 
 @click.command()
 @click.option('-f','--file',required=True,type=str)
 @click.option('-o','--output',type=str)
 @click.option('-m','--mark',type=str)
 @click.option('-s','--sleep',type=int)
-@click.option('-h','--human',default=False, type=bool)
-def main(file,output,mark,sleep,human):
+@click.option('-r','--rtime',default=False, type=bool)
+def main(file,output,mark,sleep,rtime):
     if(mark==None):
         mark="patataman"
     f=open(file,"r")
@@ -22,6 +23,15 @@ def main(file,output,mark,sleep,human):
         o=open(output,"w")
     count=len(f.readlines())
     f.seek(0)
+
+
+    banner=pyfiglet.figlet_format("XSSfinder")
+    print(banner)
+    print("Author: Raul Gimenez Herrada")
+    print("Email: madyyelf@gmail.com")
+    print("Twitter: @madyyelf")
+    print("Ko-fi: https://ko-fi.com/raulgimenezherrada")
+    print("===========================================\n\n")
 
     for url in tqdm(f,total=count,desc="Processant: ",unit="URLs"):
         u=urlparse.urlparse(url)
@@ -40,10 +50,11 @@ def main(file,output,mark,sleep,human):
                         o.write(newurl+"\n")
                         tqdm.write(newurl)
             except Exception:
+                tqdm.write("[!] Error: "+newurl)
                 pass
             if(sleep is not None):
                 time.sleep(sleep)
-            if(human == True):
+            if(rtime == True):
                 time.sleep(random.randint(4,9))
 
 
